@@ -1,0 +1,900 @@
+package it.unicam.cs.asdl1819.miniproject2;
+/**
+ * 
+ */
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+
+/**
+ * Un AVLTree è un albero binario di ricerca che si mantiene sempre bilanciato.
+ * In questa particolare classe si possono inserire elementi ripetuti di tipo
+ * {@code E} e non si possono inserire elementi {@code null}.
+ * 
+ * @author Andrea Bartozzi
+ * 
+ * @param E
+ *              il tipo degli elementi che possono essere inseriti in questo
+ *              AVLTree. La classe {@code E} deve avere un ordinamento naturale
+ *              definito tra gli elementi.
+ *
+ */
+public class AVLTree<E extends Comparable<E>> {
+
+    // puntatore al nodo radice, se questo puntatore è null allora questo
+    // AVLTree è vuoto
+    private AVLTreeNode root;
+
+    // Numero di elementi inseriti in questo AVLTree, comprese le ripetizioni
+    private int size;
+
+    // Numero di nodi in questo AVLTree
+    private int numberOfNodes;
+
+	private Object left;
+
+    /**
+     * Costruisce un AVLTree vuoto.
+     */
+    public AVLTree() {
+        root=null;
+        size=0;
+        numberOfNodes=0;
+    }
+
+    /**
+     * Costruisce un AVLTree che consiste solo di un nodo radice.
+     * 
+     * @param rootElement
+     *                        l'informazione associata al nodo radice
+     * @throws NullPointerException
+     *                                  se l'elemento passato è null
+     */
+    public AVLTree(E rootElement) {
+		if(rootElement==null)
+    		throw new NullPointerException("Impossibile creare un albero con radice nulla!");
+        this.root= new AVLTreeNode(rootElement);
+        this.size=1;
+        this.numberOfNodes=1;
+        
+    }
+
+    /**
+     * Determina se questo AVLTree è vuoto.
+     * 
+     * @return true, se questo AVLTree è vuoto.
+     */
+    public boolean isEmpty() {
+        if(this.root == null)
+        	return true;
+        else 
+        	return false;
+    }
+
+    /**
+     * Restituisce il numero di elementi contenuti in questo AVLTree. In caso di
+     * elementi ripetuti essi vengono contati più volte.
+     * 
+     * @return il numero di elementi di tipo {@code E} presenti in questo
+     *         AVLTree.
+     */
+    public int getSize() {
+        return this.size;
+    }
+
+    /**
+     * Restituisce il numero di nodi in questo AVLTree.
+     * 
+     * @return il numero di nodi in questo AVLTree.
+     */
+    public int getNumberOfNodes() {
+        return this.numberOfNodes;
+    }
+
+    /**
+     * Restituisce l'altezza di questo AVLTree. Se questo AVLTree è vuoto viene
+     * restituito il valore -1.
+     * 
+     * @return l'altezza di questo AVLTree, -1 se questo AVLTree è vuoto.
+     */
+    public int getHeight() {
+        // TODO implementare
+    	if(this.root==null)
+    		return -1;
+    	else 
+    		return 0;
+    	
+    	
+    }
+
+    /**
+     * @return the root
+     */
+    public AVLTreeNode getRoot() {
+        return root;
+    }
+
+    /**
+     * @param root
+     *                 the root to set
+     */
+    public void setRoot(AVLTreeNode root) {
+        this.root = root;
+    }
+
+    /**
+     * Determina se questo AVLTree è bilanciato. L'albero è bilanciato se tutti
+     * i nodi hanno un fattore di bilanciamento compreso tra -1 e +1.
+     * 
+     * @return true, se il fattore di bilanciamento di tutti i nodi dell'albero
+     *         è compreso tra -1 e +1.
+     */
+    public boolean isBalanced() {
+        // TODO implementare e usare il metodo corrispondente in AVLTreeNode
+        return false;
+    }
+
+    /**
+     * Inserisce un nuovo elemento in questo AVLTree. Se l'elemento è già
+     * presente viene incrementato il suo numero di occorrenze.
+     * 
+     * @param el
+     *               l'elemento da inserire.
+     * @return il numero di confronti tra elementi della classe {@code E}
+     *         effettuati durante l'inserimento
+     * @throws NullPointerException
+     *                                  se l'elemento {@code el} è null
+     */
+    public int insert(E el) {
+        // TODO implementare e usare il metodo corrispondente in AVLTreeNode
+    	if(el==null)
+    		throw new NullPointerException("Riferimento all'elemento da inserire nullo!");
+    	if(this.isEmpty()) {
+    		this.root=new AVLTreeNode(el);
+    		return 0;
+    	}else {
+    		AVLTreeNode ricerca=getNodeOf(el);
+    		return 1+ricerca.insert(el);
+    	}
+    }
+
+    /**
+     * Determina se questo AVLTree contiene un certo elemento.
+     * 
+     * @param el
+     *               l'elemento da cercare
+     * @return true se l'elemento è presente in questo AVLTree, false
+     *         altrimenti.
+     * @throws NullPointerException
+     *                                  se l'elemento {@code el} è null
+     */
+    public boolean contains(E el) {
+        // TODO implementare e usare il metodo corrispondente (search) in
+        // AVLTreeNode
+    	if(el==null)
+    		throw new NullPointerException("L'albero non può contenere elementi nulli!");
+    	AVLTreeNode contenuto=null;
+    	if(this.isEmpty()) 
+    		return false;
+    	else {
+    		contenuto=this.getNodeOf(el).search(el);
+    	}
+    	if(contenuto==null)
+    		return false;
+    	else
+    		return true;
+    }
+
+    /**
+     * Determina se un elemento è presente in questo AVLTree e ne restituisce il
+     * relativo nodo.
+     * 
+     * @param el
+     *               l'elemento da cercare
+     * @return il nodo di questo AVLTree che contiene l'elemento {@code el} e la
+     *         sua molteplicità, oppure {@code null} se l'elemento {@code el}
+     *         non è presente in questo AVLTree.
+     * @throws NullPointerException
+     *                                  se l'elemento {@code el} è null
+     * 
+     */
+    public AVLTreeNode getNodeOf(E el) {
+        // TODO implementare e usare il metodo corrispondente (search) in
+        // AVLTreeNode
+    	if(el==null)
+    		throw new NullPointerException("Il nodo cercato è nullo e non esiste!");
+    	if(this.isEmpty())
+    		return null;
+    	else {
+    		AVLTreeNode nodo=this.root.search(el);
+    		if(nodo.el!=null && nodo.el==el)
+    			return nodo;
+    		else
+    			return null;
+    	}
+    }
+
+    /**
+     * Determina il numero di occorrenze di un certo elemento in questo AVLTree.
+     * 
+     * @param el
+     *               l'elemento di cui determinare il numero di occorrenze
+     * @return il numero di occorrenze dell'elemento {@code el} in questo
+     *         AVLTree, zero se non è presente.
+     * @throws NullPointerException
+     *                                  se l'elemento {@code el} è null
+     */
+    public int getCount(E el) {
+        // TODO implementare e usare il metodo corrispondente in AVLTreeNode
+    	if(el==null)
+    		throw new NullPointerException("Non posso ricavare la molteplicità di un elemento inesistente");
+    	if(this.isEmpty())
+    		return 0;
+    	else {
+    		if(this.root.search(el)!=null)
+    			return this.root.search(el).getCount();
+    		else
+    			return 0;
+    			
+    		
+    	}
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        String descr = "AVLTree [root=" + root.el.toString() + ", size=" + size
+                + ", numberOfNodes=" + numberOfNodes + "]\n";
+        return descr + this.root.toString();
+    }
+
+    /**
+     * Restituisce la lista degli elementi contenuti in questo AVLTree secondo
+     * l'ordine determinato dalla visita in-order. Per le proprietà dell'albero
+     * AVL la lista ottenuta conterrà gli elementi in ordine crescente rispetto
+     * all'ordinamento naturale della classe {@code E}. Nel caso di elementi
+     * ripetuti, essi appaiono più volte nella lista consecutivamente.
+     * 
+     * @return la lista ordinata degli elementi contenuti in questo AVLTree,
+     *         tenendo conto della loro molteplicità.
+     */
+    public List<E> inOrderVisit() {
+        // TODO implementare e usare il metodo corrispondente in AVLTreeNode
+        return null;
+    }
+
+    /**
+     * Restituisce l'elemento minimo presente in questo AVLTree.
+     * 
+     * @return l'elemento minimo in questo AVLTree, {@code null} se questo
+     *         AVLTree è vuoto.
+     */
+    public E getMinimum() {
+        // TODO implementare e usare il metodo corrispondente in AVLTreeNode
+    	if(this.root==null)
+    		return null;
+    	else {
+    		AVLTreeNode minimo=this.root;
+    		return minimo.getMinimum().el;
+    	}
+    }
+
+    /**
+     * Restituisce l'elemento massimo presente in questo AVLTree.
+     * 
+     * @return l'elemento massimo in questo AVLTree, {@code null} se questo
+     *         AVLTree è vuoto.
+     */
+    public E getMaximum() {
+        // TODO implementare e usare il metodo corrispondente in AVLTreeNode
+        if(this.root==null)
+        	return null;
+        else
+        	return (E) this.root.getMaximum();
+    }
+
+    /**
+     * Restituisce l'elemento <b>strettamente</b> successore, in questo AVLTree,
+     * di un dato elemento. Si richiede che l'elemento passato sia presente
+     * nell'albero.
+     * 
+     * @param el
+     *               l'elemento di cui si chiede il successore
+     * @return l'elemento <b>strettamente</b> successore, rispetto
+     *         all'ordinamento naturale della classe {@code E}, di {@code el} in
+     *         questo AVLTree, oppure {@code null} se {@code el} è l'elemento
+     *         massimo.
+     * @throws NullPointerException
+     *                                      se l'elemento {@code el} è null
+     * @throws IllegalArgumentException
+     *                                      se l'elemento {@code el} non è
+     *                                      presente in questo AVLTree.
+     */
+    public E getSuccessor(E el) {
+        // TODO implementare e usare il metodo corrispondente in AVLTreeNode
+    	if(el==null)
+    		throw new NullPointerException("Non posso prendere il successore di un nodo che non esiste");
+        return null;
+    }
+
+    /**
+     * Restituisce l'elemento <b>strettamente</b> predecessore, in questo
+     * AVLTree, di un dato elemento. Si richiede che l'elemento passato sia
+     * presente nell'albero.
+     * 
+     * @param el
+     *               l'elemento di cui si chiede il predecessore
+     * @return l'elemento <b>strettamente</b> predecessore rispetto
+     *         all'ordinamento naturale della classe {@code E}, di {@code el} in
+     *         questo AVLTree, oppure {@code null} se {@code el} è l'elemento
+     *         minimo.
+     * @throws NullPointerException
+     *                                      se l'elemento {@code el} è null
+     * @throws IllegalArgumentException
+     *                                      se l'elemento {@code el} non è
+     *                                      presente in questo AVLTree.
+     */
+    public E getPredecessor(E el) {
+        // TODO implementare e usare il metodo corrispondente in AVLTreeNode
+    	if(el==null)
+    		throw new NullPointerException("Non posso prendere l'elemento predecessore di un elemento che non c'è!");
+        return null;
+    }
+
+    /**
+     * Gli elementi di questa classe sono i nodi di un AVLTree, che è la classe
+     * "involucro" della struttura dati.
+     * 
+     * @author Andrea Bartozzi
+     *
+     */
+    public class AVLTreeNode {
+        // etichetta del nodo
+        private E el;
+
+        // molteplicità dell'elemento el
+        private int count;
+
+        // sottoalbero sinistro
+        private AVLTreeNode left;
+
+        // sottoalbero destro
+        private AVLTreeNode right;
+
+        // genitore del nodo, null se questo nodo è la radice dell'AVLTree
+        private AVLTreeNode parent;
+
+        // altezza del sottoalbero avente questo nodo come radice
+        private int height;
+
+                
+        /**
+         * Create an AVLTreeNode as a root leaf
+         * 
+         * @param el
+         *               the element
+         */
+        public AVLTreeNode(E el) {
+            this.el = el;
+            this.count = 1;
+            this.left = null;
+            this.right = null;
+            this.parent = null;
+            this.height = 0;
+        }
+
+        /**
+         * Create an AVLTreeNode node containing one element to be considered
+         * child of the given parent.
+         * 
+         * @param el
+         *                   the element
+         * @param parent
+         *                   the parent of the node
+         */
+        public AVLTreeNode(E el, AVLTreeNode parent) {
+            this.el = el;
+            this.count = 1;
+            this.left = null;
+            this.right = null;
+            this.parent = parent;
+            this.height = 0;
+        }
+
+        /**
+         * Restituisce il nodo predecessore di questo nodo. Si suppone che
+         * esista un nodo predecessore, cioè che questo nodo non contenga
+         * l'elemento minimo del sottoalbero di cui è radice.
+         * 
+         * @return il nodo predecessore
+         */
+        public AVLTreeNode getPredecessor() {
+            // TODO implementare
+        	AVLTreeNode predecessore = null;
+        	if(this.parent==null)
+        		throw new NullPointerException("Non ho un genitore,quindi sono radice del mio sottoalbero");
+        	if(this.getMinimum()==this)
+        		return null;
+        	else {
+        		return this.parent.getMaximum();
+        	}
+        }
+
+        /**
+         * Restituisce il nodo successore di questo nodo. Si suppone che esista
+         * un nodo successore, cioè che questo nodo non contenga l'elemento
+         * massimo del sottoalbero di cui è radice.
+         * 
+         * @return il nodo successore
+         */
+        public AVLTreeNode getSuccessor() {
+            // TODO implementare
+        	if(this.right==null)
+        		throw new NullPointerException("Il nodo risulta essere il massimo del sottoalbero corrispondente e non ha un successore!");
+        		
+        	AVLTreeNode n;
+        	
+        	//Case 1: node has a right child
+        	if(this.right != null &&this.getMaximum()!=this) {
+        		n = this.right;
+        		while(n.left != null)
+        			n = n.left;
+        		
+        		return n;
+        	}
+        	
+        	//Case 2: node does not have a right child
+        	n = this.parent;
+        	while(n != null && n.right == this) {
+        		this.parent.right = n;
+        		n = this.parent;
+        	}
+        	
+        	return n;
+        }
+        
+        
+
+        /**
+         * Restituisce il nodo contenente l'elemento massimo del sottoalbero di
+         * cui questo nodo è radice.
+         * 
+         * @return il nodo contenente l'elemento massimo del sottoalbero di cui
+         *         questo nodo è radice.
+         */
+        public AVLTreeNode getMaximum() {
+            // TODO implementare
+        	if(this.right==null)
+        		return this;
+        	else
+        		return this.right.getMaximum();
+        }
+
+        /**
+         * Restituisce il nodo contenente l'elemento minimo del sottoalbero di
+         * cui questo nodo è radice.
+         * 
+         * @return il nodo contenente l'elemento minimo del sottoalbero di cui
+         *         questo nodo è radice.
+         */
+        public AVLTreeNode getMinimum() {
+            // TODO implementare
+        	if(this.left==null)
+        		return this;
+        	else
+        		return this.left.getMinimum();
+        }
+
+        /**
+         * Determina se questo è un nodo foglia.
+         * 
+         * @return true se questo nodo non ha figli, false altrimenti.
+         */
+        public boolean isLeaf() {
+            // TODO implementare
+        	if(this.left==null && this.right==null)
+        		return true;
+        	else 
+        		return false;
+        }
+
+        /**
+         * Restituisce l'altezza del sottoalbero la cui radice è questo nodo.
+         * 
+         * @return l'altezza del sotto albero la cui radice è questo nodo.
+         */
+        public int getHeight() {
+            return this.height;
+        }
+
+        /**
+         * Aggiorna l'altezza del sottoalbero la cui radice è questo nodo
+         * supponendo che l'altezza dei nodi figli sia già stata aggiornata.
+         */
+        public void updateHeight() {
+            // TODO implementare
+        	AVLTreeNode appoggio=null;
+        	if(this.isLeaf())
+        		this.height=0;
+        	else {
+        		int mezzaBellezzaSx=0;
+        		int mezzaBellezzaDx=0;
+        		if(this.left!=null && this.right!=null) {  //sono un nodo con figlia sia sinistro che destro
+        			mezzaBellezzaSx=this.left.getHeight();
+        			mezzaBellezzaDx=this.right.getHeight();
+        			this.height=Math.max(mezzaBellezzaSx, mezzaBellezzaDx) + 1;      			
+        			}
+        		else if(this.left !=null && this.right==null)
+        			this.height=this.left.getHeight() + 1;
+        		else
+        			this.height=this.right.getHeight()+1;
+        		}	
+        }
+
+        /**
+         * Determina il fattore di bilanciamento di questo nodo. Se il nodo è
+         * una foglia il fattore di bilanciamento è 0. Se il nodo ha solo il
+         * figlio sinistro allora il fattore di bilanciamento è l'altezza del
+         * figlio sinistro + 1. Se il nodo ha solo il figlio destro allora il
+         * fattore di bilanciamento è l'altezza del figlio destro + 1,
+         * moltiplicata per -1. Se il nodo ha entrambi i figli il fattore di
+         * bilanciamento è l'altezza del figlio sinistro meno l'altezza del
+         * figlio destro.
+         * 
+         * @return il fattore di bilanciamento di questo nodo.
+         */
+        public int getBalanceFactor() {
+            // TODO implementare
+        	if(this.isLeaf())
+        		return 0;
+        	else if(this.left!=null && this.right==null)
+        		return this.left.getHeight() + 1;
+        	else if (this.right!=null & this.left==null)
+        		return (this.right.getHeight() + 1) * -1;
+        	else 
+        		return this.left.getHeight() - this.right.getHeight();
+        }
+
+
+		/**
+         * Determina se questo nodo e tutti i suoi discendenti hanno un fattore
+         * di bilanciamento compreso tra -1 e 1.
+         * 
+         * @return true se qrg6t7hy8ju9kioluesto nodo e tutti i suoi discendenti sono
+         *         bilanciati, false altrimenti.
+         */
+        public boolean isBalanced() {        
+            // TODO implementare
+        	boolean bilanciamentoSx = true;
+        	boolean bilanciamentoDx = true;
+        	AVLTreeNode chiaveSx=this;
+        	AVLTreeNode chiaveDx=this;
+        	if(this.isLeaf())
+        		return true;
+        	if (this.left!=null && this.right!=null) {
+        			if(this.getBalanceFactor()>=-1 && this.getBalanceFactor()<=1) {   //controllo se l'altezza del sottoalbero sinistro meno l'altezza del sottoalbero destro è compresa tra -1 e 1,ritornando true,cioè albero bilanciato,altrimenti ritorno falso
+        					while(this.left!=null && bilanciamentoSx==true) {  //scendo in tutti i nodi di sinistra e mi fermo se trovo uno non bilanciato
+        						chiaveSx=this.left;
+        						bilanciamentoSx=chiaveSx.isBalanced();
+        					}
+        					while(this.right!=null && bilanciamentoDx==true) {  //stessa cosa di sopra con i nodi di destra
+        						chiaveDx=this.right;
+        						bilanciamentoDx=chiaveDx.isBalanced();
+        					}
+        			}
+        	}
+        	
+        	else if(this.left!=null && this.right==null && this.getBalanceFactor()>=-1 && this.getBalanceFactor()<=1)
+        		return this.left.isBalanced();
+        	else if(this.left==null && this.right!=null && this.getBalanceFactor()<=1 && this.getBalanceFactor()>=-1)
+        		return this.right.isBalanced();
+        	else {	 
+        		int bilanciamento=this.getBalanceFactor();
+        		if(bilanciamento>=-1 && bilanciamento<=1)
+        			return true;
+        		else
+        			return false;
+        	}
+        	if(bilanciamentoSx && bilanciamentoDx)
+        		return true;
+        	else
+        		return false;
+        }
+
+        /**
+         * @return the el
+         */
+        public E getEl() {
+            return el;
+        }
+
+        /**
+         * @param el
+         *               the el to set
+         */
+        public void setEl(E el) {
+            this.el = el;
+        }
+
+        /**
+         * @return the count
+         */
+        public int getCount() {
+            return count;
+        }
+
+        /**
+         * @param count
+         *                  the count to set
+         */
+        public void setCount(int count) {
+            this.count = count;
+        }
+
+        /**
+         * @return the left
+         */
+        public AVLTreeNode getLeft() {
+            return left;
+        }
+
+        /**
+         * @param left
+         *                 the left to set
+         */
+        public void setLeft(AVLTreeNode left) {
+            this.left = left;
+        }
+
+        /**
+         * @return the right
+         */
+        public AVLTreeNode getRight() {
+            return right;
+        }
+
+        /**
+         * @param right
+         *                  the right to set
+         */
+        public void setRight(AVLTreeNode right) {
+            this.right = right;
+        }
+
+        /**
+         * @return the parent
+         */
+        public AVLTreeNode getParent() {
+            return parent;
+        }
+
+        /**
+         * @param parent
+         *                   the parent to set
+         */
+        public void setParent(AVLTreeNode parent) {
+            this.parent = parent;
+        }
+
+        /**
+         * @param height
+         *                   the height to set
+         */
+        public void setHeight(int height) {
+            this.height = height;
+        }
+
+        /*
+         * (non-Javadoc)
+         * 
+         * @see java.lang.Object#toString()
+         */
+        @Override
+        public String toString() {
+            StringBuffer s = new StringBuffer();
+            s.append("(");
+            s.append(this.el);
+            s.append(", ");
+            if (this.left == null)
+                s.append("()");
+            else
+                s.append(this.left.toString());
+            s.append(", ");
+            if (this.right == null)
+                s.append("()");
+            else
+                s.append(this.right.toString());
+            s.append(")");
+            return s.toString();
+        }
+
+        /**
+         * Ricerca un elemento a partire da questo nodo.
+         * 
+         * @param el
+         *               the element to search for
+         * 
+         * @return the node containing the element or null if the element is not
+         *         found
+         */
+        public AVLTreeNode search(E el) {
+            // TODO implementare
+        	
+        	if (el==null)
+        		throw new NullPointerException("Impossibile cercare un elemento che non esiste!");
+        	AVLTreeNode chiaveTrovata=null;
+        	int x=0;
+        	if(this.el==el)
+        		return this;
+        	else
+        		x=this.el.compareTo(el);
+        	if(x<0) {   //l'elemento è più piccolo di quello cercato allora cerco prima nel sottoalbero destro,altrimenti salgo.
+        		if(this.right!=null)
+        			chiaveTrovata= this.right.search(el);
+        		else if(this.parent!=null)
+        			chiaveTrovata= this.parent.search(el);
+        		else
+        			return null;
+        		if(chiaveTrovata.el.compareTo(el)==0)
+        			return chiaveTrovata;
+        		else 
+        			return null;
+        	}
+        	else if(x==0){
+        		return this; //caso di eguaglianza,il nodo che cerco è questo nodo
+        	}
+        	else { //cerco nel sottoalbero sinistro perchè è l'elemento che cerco è minore del nodo che chiama il search()
+        		if(this.left!=null)
+        			chiaveTrovata=this.left.search(el);
+        		else if(this.parent!=null)
+        			chiaveTrovata=this.left.search(el);
+        		else
+        			return null;
+        		if(chiaveTrovata.el.compareTo(el)==0)
+        			return chiaveTrovata;
+        		else
+        			return null;
+        	}  		
+        }
+
+        /**
+         * Inserisce un elemento nell'albero AVL a partire da questo nodo. Se
+         * l'elemento è già presente ne aumenta semplicemente la molteplicità di
+         * uno. Se l'elemento non è presente aggiunge un nodo nella opportuna
+         * posizione e poi procede al ribilanciamento dell'albero se
+         * l'inserimento del nuovo nodo provoca uno sbilanciamento in almeno un
+         * nodo.
+         * 
+         * @param el
+         *               l'elemento da inserire
+         * 
+         * @return il numero di confronti tra elementi della classe {@code E}
+         *         effettuati durante l'inserimento.
+         */
+        public int insert(E el) {
+            // TODO implementare
+        	if (el == null)
+                throw new NullPointerException("Tentativo di inserire un elemento null nell'albero!");
+        	if(this.parent==null) {  //sono la radice
+        			int x=this.el.compareTo(el);
+        			if(x>0) {  //inserisco a sinistra
+        				if(this.left==null) {
+        				this.left=new AVLTreeNode(el,this);
+        				this.updateHeight();
+        				return 1;
+        				}else
+        					return 1 +  this.left.insert(el);
+        			}
+        			else if(x<0) {
+        				if(this.right==null) {
+        				this.right=new AVLTreeNode(el,this);
+        				this.updateHeight();
+        				return 1;
+        				}else
+        					return 1 + this.right.insert(el);
+        			}
+        			else {   //sono la radice e inserisco me stesso
+        				this.count++;
+        				return 1;
+        			}
+        	}
+        	AVLTreeNode appoggio=this;
+        	AVLTreeNode sbilanciato=null;
+        	int x=this.el.compareTo(el);
+        	if(x<0) {    //l'elemento del nodo attuale è minore di quello da inserire,quindi 
+        		while(appoggio.parent!=null) 
+        			appoggio=appoggio.parent;       //salgo alla radice per vedere se rimanere andare ad inserire alla sua destra o sinistra
+        		int y=appoggio.el.compareTo(el);
+        		if(y<0) {  //la radice è piu piccola dell'elemento da inserire allora rimango a destra
+        			if(appoggio.right==null) {  //se la destra del nodo attuale è vuota,inserisco il nodo nuovo
+        				appoggio.right=new AVLTreeNode(el,appoggio);
+        				appoggio.right.setHeight(0);
+        				appoggio.updateHeight();
+        				
+        				int fattoreBilanciamento=this.getBalanceFactor();
+        				return 1;
+        			}else {   //altrimenti  il figlio destro del nodo attuale è occupato e rilancio il confronto
+        				return 1 + appoggio.right.insert(el);
+        			}
+        		}
+        		else if(y==0) {  
+        			appoggio.count++;
+        			return 1;
+        		}
+        		else {
+        			if(this.right==null) {
+        				this.right=new AVLTreeNode(el,this);
+        				this.right.setHeight(0);
+        				while(this.parent!=null) {
+        					this.parent.updateHeight();          // guardare altezzeeeeeeee!
+        					while(!this.parent.isBalanced())
+        						sbilanciato=this.parent;
+        				}
+        				return 1;
+        			}else {
+        				return 1 + this.right.insert(el);
+        			}
+        		}
+        	}
+        	else if(x==0) { //caso di uguaglianza,aumento molteplicità
+        		this.count++;
+        		return 1;
+        	}
+        	else {  // l'elemento attuale è maggiore di quello da inserire, inserimento a sinistra!
+        		appoggio=this;
+        		while(appoggio.parent!=null)
+        			appoggio=appoggio.parent;
+        		int y=appoggio.el.compareTo(el);
+        		if(y<0) {     //radice piu piccola dell'elemento da inserire(a sinistra) allora inserisco a sinistra del nodo attuale
+        			if(this.left==null) {
+        				this.left=new AVLTreeNode(el,this);
+        				this.left.setHeight(0);
+        				this.updateHeight();
+        				return 1;
+        			}else {
+        				return 1 + this.left.insert(el);
+        			}
+        		}
+        		else if(y==0) {   //radice uguale all'elemento da inserire
+        			appoggio.count++;
+        			return 1;
+        			
+        		}
+        		else {    //radice piu grande dell'elemento da inserire allora lancio appoggio.left.insert
+        			if(appoggio.left==null) {
+        				appoggio.left=new AVLTreeNode(el,appoggio);
+        				return 1;
+        			}else {
+        				return 1 + appoggio.left.insert(el);
+        			}
+        		}
+        	}     
+        }
+
+        // TODO inserire i metodi per i quattro tipi di rotazioni
+        // sinistra-sinistra, sinistra-destra, destra-destra e destra-sinistra
+        // come metodi private con gli opportuni parametri.
+        private AVLTreeNode leftRotate(AVLTreeNode n) {
+            AVLTreeNode r = n.right;
+            n.right = r.left;
+            r.left = n;
+            n.height = Math.max(n.left.getHeight(), n.right.getHeight()) + 1;
+            r.height = Math.max(r.left.getHeight(), r.right.getHeight()) + 1;
+            return r;
+        }
+
+        private AVLTreeNode rightRotate(AVLTreeNode n) {
+            AVLTreeNode r = n.left;
+            n.left = r.right;
+            r.right = n;
+            n.height = Math.max(n.left.getHeight(), n.right.getHeight()) + 1;
+            r.height = Math.max(r.left.getHeight(), r.right.getHeight()) + 1;
+            return r;
+        }
+    }
+}
